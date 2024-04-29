@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostra Valori</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Media query per adattare il layout della tabella su dispositivi di dimensioni più piccole */
+        @media screen and (max-width: 600px) {
+            table {
+                width: 100%;
+            }
+            td, th {
+                display: block;
+                text-align: center;
+            }
+            td {
+                padding: 10px 0;
+            }
+            th {
+                padding: 10px 0;
+            }
+        }
+         /* Stili per il pulsante */
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .custom-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .custom-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Dati Ricevuti</h2>
+    <table>
+        <tr>
+            <th>Voce</th>
+            <th>Dati iniziali</th> <!-- Nuova colonna -->
+            <th>Valore</th>
+        </tr>
+        <tr>
+            <td>Costante di Peso (Kg) per età > 18 anni</td>
+            <td id="DatiInizialiSesso"></td> <!-- Nuova cella -->
+            <td id="ValoreSesso"></td>
+        </tr>
+        <tr>
+            <td>ALTEZZA DA TERRA DELLE MANI ALL'INIZIO DEL SOLLEVAMENTO</td>
+            <td id="DatiInizialiAltezza"></td> <!-- Nuova cella -->
+            <td id="ValoreAltezza"></td>
+        </tr>
+        <tr>
+            <td>DISLOCAZIONE VERTICALE DEL PESO FRA INIZIO E FINE DEL SOLLEVAMENTO</td>
+            <td id="DatiInizialiDislocazioneVerticale"></td> <!-- Nuova cella -->
+            <td id="ValoreDislocazioneVerticale"></td>
+        </tr>
+        <tr>
+            <td>DISTANZA ORIZZONTALE TRA LE MANI E IL PUNTO DI MEZZO DELLE CAVIGLIE</td>
+            <td id="DatiInizialiDistanzaOrizzontale"></td> <!-- Nuova cella -->
+            <td id="ValoreDistanzaOrizzontale"></td>
+        </tr>
+        <tr>
+            <td>ANGOLO DI ASIMMETRIA DEL PESO (IN GRADI)</td>
+            <td id="DatiInizialiDislocazioneAngolare"></td> <!-- Nuova cella -->
+            <td id="ValoreDislocazioneAngolare"></td>
+        </tr>
+        <tr>
+            <td>GIUDIZIO SULLA PRESA DELCARICO</td>
+            <td id="DatiInizialiGiudizio"></td> <!-- Nuova cella -->
+            <td id="ValoreGiudizio"></td>
+        </tr>
+        <tr>
+            <td>FREQUENZA DEI GESTI (N. ATTI AL MINUTO) IN RELAZIONE ALLA DURATA</td>
+            <td id="DatiInizialiFrequenza"></td> <!-- Nuova cella -->
+            <td id="ValoreFrequenza"></td>
+        </tr>
+        <tr>
+            <td>PESO ALZATO (Kg)</td>
+            <td id="DatiInizialiPeso"></td> <!-- Nuova cella -->
+            <td id="ValorePeso"></td>
+        </tr>
+        <tr>
+            <td>INDICE DI ESPOSIZIONE</td>
+            <td></td> <!-- Cella vuota per il peso calcolato -->
+            <td id="PesoCalcolato"></td>
+        </tr>
+    </table>
+
+    <div class="button-container">
+        <button class="custom-button" onclick="esportaInPDF()">Esporta in pdf</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Funzione per esportare in PDF (senza modifiche)
+        function esportaInPDF() {
+            // Verifica che jsPDF sia definito e la pagina sia completamente caricata
+            if (typeof jsPDF !== 'undefined') {
+                const doc = new jsPDF();
+                const source = document.querySelector('table');
+                doc.autoTable({ html: source });
+                doc.save('tabella.pdf');
+            } else {
+                // jsPDF non è definito, gestisci l'errore o notifica l'utente
+                console.error('jsPDF non è definito. Assicurati di aver incluso correttamente la libreria.');
+            }
+        }
+
+        // Codice rimuovendo il listener aggiuntivo
+        // Esegui la funzione per visualizzare i valori nella tabella quando il DOM è pronto
+        document.addEventListener("DOMContentLoaded", function() {
+            visualizzaValori();
+        });
+
+        const ValoreSesso = { maschio: 30, femmina: 20 };
+        const ValoreAltezza = {"0" : 0.78, "25":0.85 , "50": 0.93, "75":1.00, "100": 0.93, "125":0.85, "150": 0.78, ">175": 0.00 };
+        const ValoreDislocazioneVerticale = {"25": 1.00, "30" : 0.97, "40": 0.93, "50": 0.91, "70": 0.88, "100": 0.87, "170":0.85, ">175": 0.00 };
+        const ValoreDistanzaOrizzontale = {"25": 1.00, "30": 0.83, "40": 0.63, "50": 0.50, "55":0.45, "60":0.42, ">63": 0.00};
+        const ValoreDislocazioneAngolare = {"0":1.00 , "30°":0.90 , "60°": 0.81 , "90°": 0.71, "120°": 0.62 , "135°": 0.57 , ">135°": 0.00 };
+        const ValoreGiudizio = {buono : 1.00, scarso:0.90 };
+        const ValoreFrequenza = {"continuo(1 ora)": 0.94, "continuo(1-2 ore)": 0.88, "continuo(2-8 ore)" : 0.75};
+
+        // Funzione per visualizzare i valori nella tabella
+        function visualizzaValori() {
+            // Recupera gli elementi della tabella
+            const valoreSessoElement = document.getElementById("ValoreSesso");
+            const valoreAltezzaElement = document.getElementById("ValoreAltezza");
+            const valoreDislocazioneVerticaleElement = document.getElementById("ValoreDislocazioneVerticale");
+            const valoreDistanzaOrizzontaleElement = document.getElementById("ValoreDistanzaOrizzontale");
+            const valoreDislocazioneAngolareElement = document.getElementById("ValoreDislocazioneAngolare");
+            const valoreGiudizioElement = document.getElementById("ValoreGiudizio");
+            const valoreFrequenzaElement = document.getElementById("ValoreFrequenza");
+            const valorePesoElement = document.getElementById("ValorePeso");
+            const pesoCalcolatoElement = document.getElementById("PesoCalcolato");
+            
+            // Visualizza i valori ricevuti nel documento HTML
+            valoreSessoElement.textContent = mostraValoreSesso();
+            valoreAltezzaElement.textContent = mostraValoreAltezza();
+            valoreDislocazioneVerticaleElement.textContent = mostraValoreDislocazioneVerticale();
+            valoreDistanzaOrizzontaleElement.textContent = mostraValoreDistanzaOrizzontale();
+            valoreDislocazioneAngolareElement.textContent = mostraValoreDislocazioneAngolare();
+            valoreGiudizioElement.textContent = mostraValoreGiudizio();
+            valoreFrequenzaElement.textContent = mostraValoreFrequenza();
+            valorePesoElement.textContent = prendiValorePeso();
+            pesoCalcolatoElement.textContent = calcoli();
+
+            // Visualizza i dati iniziali
+            document.getElementById("DatiInizialiSesso").textContent = mostraDatiInizialiSesso();
+            document.getElementById("DatiInizialiAltezza").textContent = mostraDatiInizialiAltezza();
+            document.getElementById("DatiInizialiDislocazioneVerticale").textContent = mostraDatiInizialiDislocazioneVerticale();
+            document.getElementById("DatiInizialiDistanzaOrizzontale").textContent = mostraDatiInizialiDistanzaOrizzontale();
+            document.getElementById("DatiInizialiDislocazioneAngolare").textContent = mostraDatiInizialiDislocazioneAngolare();
+            document.getElementById("DatiInizialiGiudizio").textContent = mostraDatiInizialiGiudizio();
+            document.getElementById("DatiInizialiFrequenza").textContent = mostraDatiInizialiFrequenza();
+            document.getElementById("DatiInizialiPeso").textContent = mostraDatiInizialiPeso();
+        }
+
+        // Funzione per eseguire i calcoli
+        function calcoli() {
+            const valoreSesso = mostraValoreSesso();
+            const valoreAltezza = mostraValoreAltezza();
+            const ValoreDislocazioneVerticale = mostraValoreDislocazioneVerticale();
+            const ValoreDistanzaOrizzontale = mostraValoreDistanzaOrizzontale();
+            const ValoreDislocazioneAngolare = mostraValoreDislocazioneAngolare();
+            const ValoreGiudizio = mostraValoreGiudizio();
+            const ValoreFrequenza = mostraValoreFrequenza();
+            const Valore = prendiValorePeso();
+            
+            // Esegui i calcoli qui utilizzando i valori di sesso e altezza
+            // Ad esempio, calcolo del peso utilizzando i valori di sesso e altezza
+            const pesoCalcolato = (valoreSesso * valoreAltezza * ValoreDislocazioneVerticale * ValoreDistanzaOrizzontale * ValoreDislocazioneAngolare * ValoreGiudizio * ValoreFrequenza) / Valore;
+            
+            // Ritorna il peso calcolato
+            return pesoCalcolato;
+        }
+
+        // Funzioni per ottenere i valori
+        function mostraValoreSesso() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const sessoSelezionato = urlParams.get('sesso');
+            return ValoreSesso[sessoSelezionato];
+        }
+
+        function mostraValoreAltezza() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const altezzaSelezionata = urlParams.get('altezza');
+            return ValoreAltezza[altezzaSelezionata];
+        }
+
+        function mostraValoreDislocazioneVerticale() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const ValoreDislocazioneVer = urlParams.get('dislocazioneVerticale');
+            return ValoreDislocazioneVerticale[ValoreDislocazioneVer];
+        }
+
+        function mostraValoreDistanzaOrizzontale(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const valoreDistanzaOriz = urlParams.get('distanzaOrizzontale');
+            return ValoreDistanzaOrizzontale[valoreDistanzaOriz];
+        }
+
+        function mostraValoreDislocazioneAngolare(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const valoredislocazioneAngo = urlParams.get('dislocazioneAngolare');
+            return ValoreDislocazioneAngolare[valoredislocazioneAngo];
+        }
+
+        function mostraValoreGiudizio(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const giudizioSelezionato = urlParams.get('giudizio');
+            return ValoreGiudizio[giudizioSelezionato];
+        }
+
+        function mostraValoreFrequenza(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const frequenzaSelezionata = urlParams.get('frequenza');
+            return ValoreFrequenza[frequenzaSelezionata];
+        }
+
+
+        function prendiValorePeso(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            return urlParams.get('peso');
+        }
+
+        // Funzioni per ottenere i dati iniziali
+        function mostraDatiInizialiSesso() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const sessoSelezionato = urlParams.get('sesso');
+            return sessoSelezionato;
+        }
+
+        function mostraDatiInizialiAltezza() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const altezzaSelezionata = urlParams.get('altezza');
+            return altezzaSelezionata;
+        }
+
+        function mostraDatiInizialiDislocazioneVerticale() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const ValoreDislocazioneVer = urlParams.get('dislocazioneVerticale');
+            return ValoreDislocazioneVer;
+        }
+
+        function mostraDatiInizialiDistanzaOrizzontale(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const valoreDistanzaOriz = urlParams.get('distanzaOrizzontale');
+            return valoreDistanzaOriz;
+        }
+
+        function mostraDatiInizialiDislocazioneAngolare(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const valoredislocazioneAngo = urlParams.get('dislocazioneAngolare');
+            return valoredislocazioneAngo;
+        }
+
+        function mostraDatiInizialiGiudizio(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const giudizioSelezionato = urlParams.get('giudizio');
+            return giudizioSelezionato;
+        }
+
+        function mostraDatiInizialiFrequenza(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const frequenzaSelezionata = urlParams.get('frequenza');
+            return frequenzaSelezionata;
+        }
+
+        function mostraDatiInizialiPeso(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            return urlParams.get('peso');
+        }
+
+        // Esegui la funzione per visualizzare i valori nella tabella quando il DOM è pronto
+        document.addEventListener("DOMContentLoaded", function() {
+            visualizzaValori();
+        });
+    </script>
+</body>
+</html>

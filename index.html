@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo del Peso Limite Raccomandato e Indice di Esposizione</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Media query per adattare il layout della tabella su dispositivi di dimensioni più piccole */
+        @media screen and (max-width: 600px) {
+            table {
+                width: 100%;
+            }
+            td, th {
+                display: block;
+                text-align: center;
+            }
+            td {
+                padding: 10px 0;
+            }
+            th {
+                padding: 10px 0;
+            }
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .custom-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .custom-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Calcolo del Peso Limite Raccomandato e Indice di Esposizione</h2>
+    <form id="calcoloForm" action="pagina_visualizzazione_dati.html" method="get">
+        <table>
+            <tr>
+                <th>Voce</th>
+                <th>Dato</th>
+            </tr>
+            <tr>
+                <td>Costante di Peso (Kg) per età > 18 anni</td>
+                <td>
+                    <select name="sesso">
+                        <option value="maschio">Maschio</option>
+                        <option value="femmina">Femmina</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>ALTEZZA DA TERRA DELLE MANI ALL'INIZIO DEL SOLLEVAMENTO</td>
+                <td>
+                    <select name="altezza">
+                        <option>0</option>
+                        <option>25</option>
+                        <option>50</option>
+                        <option>75</option>
+                        <option>100</option>
+                        <option>125</option>
+                        <option>150</option>
+                        <option>>175</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>DISLOCAZIONE VERTICALE DEL PESO FRA INIZIO E FINE DEL SOLLEVAMENTO</td>
+                <td>
+                    <select name="dislocazioneVerticale">
+                        <option>25</option>
+                        <option>30</option>
+                        <option>40</option>
+                        <option>50</option>
+                        <option>70</option>
+                        <option>100</option>
+                        <option>170</option>
+                        <option>>175</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>DISTANZA ORIZZONTALE TRA LE MANI E IL PUNTO DI MEZZO DELLE CAVIGLIE</td>
+                <td>
+                    <select name="distanzaOrizzontale">
+                        <option>25</option>
+                        <option>30</option>
+                        <option>40</option>
+                        <option>50</option>
+                        <option>55</option>
+                        <option>60</option>
+                        <option>>63</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>ANGOLO DI ASIMMETRIA DEL PESO (IN GRADI)</td>
+                <td>
+                    <select name="dislocazioneAngolare">
+                        <option>0</option>
+                        <option>30°</option>
+                        <option>60°</option>
+                        <option>90°</option>
+                        <option>120°</option>
+                        <option>135°</option>
+                        <option>>135°</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>GIUDIZIO SULLA PRESA DEL CARICO</td>
+                <td>
+                    <select name="giudizio">
+                        <option value="buono">Buono</option>
+                        <option value="scarso">Scarso</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>FREQUENZA DEI GESTI (N. ATTI AL MINUTO) IN RELAZIONE ALLA DURATA</td>
+                <td>
+                    <select name="frequenza">
+                        <option value="continuo(1 ora)">continuo(1 ora)</option>
+                        <option value="continuo(1-2 ore)">continuo(1-2 ore)</option>
+                        <option value="continuo(2-8 ore)">continuo(2-8 ore)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>PESO ALZATO (Kg)</td>
+                <td>
+                    <input type="number" name="peso">
+                </td>
+            </tr>
+        </table>
+        <div class="button-container">
+            <button class="custom-button">invia</button>
+        </div>
+        
+    </form>
+</body>
+</html>
