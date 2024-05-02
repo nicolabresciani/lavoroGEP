@@ -1,2 +1,0 @@
-# lavoroGEP
-DVR
